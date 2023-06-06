@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "vue": "^3.3.2",
-    "vue-router": "^4.2.0"
+    "vue-cal": "^4.8.1",
+    "vue-router": "^4.2.0",
+    "wave-ui": "^3.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
