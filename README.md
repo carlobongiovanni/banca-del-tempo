@@ -1,14 +1,6 @@
 # banca-del-tempo
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+This SPA is deployed into [bancadeltempo.netlify.app](https://bancadeltempo.netlify.app/) and is a volunteer project done for a friend. 
 
 ## Project Setup
 
@@ -27,3 +19,13 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## Docs
+
+[authentication tutorial](https://vuejsexamples.com/vue-3-authentication-with-jwt-vuex-and-vue-router/)
+
+## Used Libraries
+
+[wave ui for css](https://antoniandre.github.io/wave-ui/)
+[calendar](https://antoniandre.github.io/vue-cal/)
+vue3 stack

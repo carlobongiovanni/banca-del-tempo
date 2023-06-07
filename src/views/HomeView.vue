@@ -16,10 +16,10 @@ import 'vue-cal/dist/vuecal.css'
   />
 
   <w-dialog
-    v-model="showDialog"
+    v-model="eventDialog.show"
     :width="500"
-    :persistent="true"
-    :overlay-opacity="0.5"
+    :persistent="eventDialog.persistent"
+    :overlay-opacity="eventDialog.opacity"
     >
       <template #title>
         <w-icon class="mr2">mdi mdi-tune</w-icon>
@@ -41,7 +41,7 @@ import 'vue-cal/dist/vuecal.css'
       </div>
       <template #actions>
         <div class="spacer" />
-      <w-button @click="showDialog = false">Close</w-button>
+      <w-button @click="eventDialog.show = false">Close</w-button>
     </template>
   </w-dialog>
 
@@ -66,7 +66,11 @@ export default {
   data() {
     return {
       selectedEvent: {},
-      showDialog: false,
+      eventDialog: {
+        show: false,
+        opacity: '0.5',
+        persistent: true
+      },
       changeInterest: {
         show: false
       },
@@ -123,14 +127,14 @@ export default {
           content: 'Clicca per vedere',
           contentFull: 'Ho piantato pomodori ma non crescono. Forse hanno bisogno di acqua?', 
           class: 'leisure'
-        },      ]
+        },      
+      ]
       this.events = calendarEvents
     },
     onEventClick (event, e) {
       this.selectedEvent = event
-      this.showDialog = true
+      this.eventDialog.show = true
 
-      // Prevent navigating to narrower view (default vue-cal behavior).
       e.stopPropagation()
     }
   }

@@ -7,7 +7,9 @@ import WaveUI from 'wave-ui'
 import 'wave-ui/dist/wave-ui.css'
 
 const app = createApp(App)
-app.use(WaveUI, { /* Some Wave UI options */ })
+app.use(WaveUI, { 
+    theme: 'light' 
+})
 
 app.use(router)
 
