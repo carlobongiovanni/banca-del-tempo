@@ -22,7 +22,7 @@ npm run build
 
 ## Docs
 
-[authentication tutorial](https://vuejsexamples.com/vue-3-authentication-with-jwt-vuex-and-vue-router/)
+[authentication tutorial](https://jasonwatmore.com/post/2022/05/26/vue-3-pinia-jwt-authentication-tutorial-example#env)
 
 ## Used Libraries
 
