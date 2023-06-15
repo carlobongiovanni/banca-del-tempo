@@ -95,7 +95,7 @@ const schema = object().shape({
                 <div class="invalid-feedback">{{errors.password}}</div>
             </div>
             <div>
-                <label>Confirm Password</label>
+                <label>Conferma Password</label>
                 <Field name="confirm_password" type="password" class="form-control" :class="{ 'is-invalid': errors.confirm_password }" />
                 <div class="invalid-feedback">{{errors.confirm_password}}</div>
             </div>

@@ -12,8 +12,10 @@ const authStore = useAuthStore();
       <HelloWorld msg="Benvenuto alla Banca del Tempo di Luca!" />
 
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/">Home </RouterLink>
+        <RouterLink to="/about">About </RouterLink>
+        <RouterLink to="/register">Register </RouterLink>
+        <RouterLink to="/login">Login </RouterLink>
       </nav>
 
       <h3>Procedete al <router-link :to="{ name: 'login' }">Login</router-link> o alla <router-link :to="{ name: 'register' }">registrazione</router-link> per poter accedere alla banca del tempo</h3>
