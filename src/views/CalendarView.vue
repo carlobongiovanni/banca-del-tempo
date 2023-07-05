@@ -72,15 +72,16 @@ export default {
     fetchEvents({ view, startDate, endDate, week }) {
       console.log('Fetching events', { view, startDate, endDate, week })
 
-      this.bdtevents = [], this.getEventsFromBackend(week).catch(error => {
-          console.log(error)
-          this.bdtevents = [functionToGenerateErrorEvent(startDate, endDate)]
-        } 
-      )
+      this.getEventsFromBackend(week)
+        .then(response => this.bdtevents = response)
+        .catch(error => {
+            console.log(error)
+            this.bdtevents = [functionToGenerateErrorEvent(startDate, endDate)]
+          } 
+        )
     },
     async getEventsFromBackend(week) {
       const calendarEvents = await fetchWrapper.post(`${baseUrl}`, { week });
-
       return calendarEvents
     },
     onEventClick (event, e) {

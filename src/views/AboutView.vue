@@ -110,7 +110,16 @@ export default {
           content: 'Clicca per vedere',
           contentFull: 'Ho piantato pomodori ma non crescono. Forse hanno bisogno di acqua?', 
           class: 'leisure'
-        },      
+        }, 
+        {
+          start: '2023-07-05 15:00',
+          end: '2023-07-05 17:00',
+          title: 'Sistemare recinzione asini',
+          content: 'Clicca per vedere',
+          contentFull: 'Gli asini scappano e chi li tiene? Facciamo una bella recinzione dai, magari elettrificata con corrente a 220',
+          class: 'leisure',
+          week: '27'
+        }     
       ]
       this.events = calendarEvents
     },
