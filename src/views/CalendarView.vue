@@ -11,13 +11,16 @@ import 'vue-cal/dist/vuecal.css'
     <h3>Una volta che il lavoro è stato eseguito poi la direzione ti accredita il tempo nella sua banca. Come premi direi di mettere 6 uova ogni 2 ore di lavoro, dopo 30 ore tesserino 5 lezioni, dopo 50 ore tesserino 10 lezioni.</h3>
     <vue-cal 
       style="height: 500px"
-      :events="events"
+      :events="bdtevents"
       :disable-views="['years']"
       :time-from="8*60"
       :time-to="20*60"
-      @ready="calendarEventsCallback"
-      @view-change="calendarEventsCallback"
-      :on-event-click="onEventClick"
+      @ready="fetchEvents"
+      @view-change="fetchEvents"
+      :snap-to-time="15"
+      hide-weekends
+      editable-events
+      class="vuecal--full-height-delete"
     />
 
     <w-dialog
@@ -48,6 +51,9 @@ import 'vue-cal/dist/vuecal.css'
 </template>
 
 <script>
+import { fetchWrapper, functionToGenerateErrorEvent } from '@/helpers';
+var baseUrl = "https://eu-central-1.aws.data.mongodb-api.com/app/bancadeltempo-iwvgr/endpoint/events"
+
 export default {
   data() {
     return {
@@ -57,62 +63,25 @@ export default {
         opacity: '0.5',
         persistent: true
       },
-      events: [],
+      bdtevents: [],
+      backendEvents: [],
+      calendarEvents: []
     }
   }, 
   methods: {
-    calendarEventsCallback() {
-      var calendarEvents = [
-        {
-          start: '2023-06-06 11:00',
-          end: '2023-06-06 12:30',
-          title: 'Spalare',
-          content: 'Clicca per vedere',
-          contentFull: 'Spalare merda. Questa attivita\' permette di migliorare la forza corporea. Guanti e pala sono provvisti gratuitamente', 
-          class: 'leisure'
-        },
-        {
-          start: '2023-06-07 15:00',
-          end: '2023-06-07 17:00',
-          title: 'Sistemare recinzione asini',
-          content: 'Clicca per vedere',
-          contentFull: 'Gli asini scappano e chi li tiene? Facciamo una bella recinzione dai, magari elettrificata con corrente a 220', 
-          class: 'leisure'
-        },
-        {
-          start: '2023-06-08 9:00',
-          end: '2023-06-08 11:00',
-          title: 'Annaffiare piante',
-          content: 'Clicca per vedere',
-          contentFull: 'Ho piantato pomodori ma non crescono. Forse hanno bisogno di acqua?', 
-          class: 'leisure'
-        },
-        {
-          start: '2023-06-13 11:00',
-          end: '2023-06-13 12:30',
-          title: 'Spalare',
-          content: 'Clicca per vedere',
-          contentFull: 'Spalare merda. Questa attivita\' permette di migliorare la forza corporea. Guanti e pala sono provvisti gratuitamente', 
-          class: 'leisure'
-        },
-        {
-          start: '2023-06-14 15:00',
-          end: '2023-06-14 17:00',
-          title: 'Sistemare recinzione asini',
-          content: 'Clicca per vedere',
-          contentFull: 'Gli asini scappano e chi li tiene? Facciamo una bella recinzione dai, magari elettrificata con corrente a 220', 
-          class: 'leisure'
-        },
-        {
-          start: '2023-06-15 9:00',
-          end: '2023-06-15 11:00',
-          title: 'Annaffiare piante',
-          content: 'Clicca per vedere',
-          contentFull: 'Ho piantato pomodori ma non crescono. Forse hanno bisogno di acqua?', 
-          class: 'leisure'
-        },      
-      ]
-      this.events = calendarEvents
+    fetchEvents({ view, startDate, endDate, week }) {
+      console.log('Fetching events', { view, startDate, endDate, week })
+
+      this.bdtevents = [], this.getEventsFromBackend(week).catch(error => {
+          console.log(error)
+          this.bdtevents = [functionToGenerateErrorEvent(startDate, endDate)]
+        } 
+      )
+    },
+    async getEventsFromBackend(week) {
+      const calendarEvents = await fetchWrapper.post(`${baseUrl}`, { week });
+
+      return calendarEvents
     },
     onEventClick (event, e) {
       this.selectedEvent = event
@@ -142,5 +111,11 @@ export default {
 
 .vuecal__event-content {
   font-style: italic;
+}
+
+.vuecal__event.backendError {
+  background: repeating-linear-gradient(45deg, transparent, transparent 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
+  color: #999;
+  align-items: center;
 }
 </style>

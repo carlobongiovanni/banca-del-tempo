@@ -64,8 +64,8 @@ export default {
     calendarEventsCallback() {
       var calendarEvents = [
         {
-          start: '2023-06-06 11:00',
-          end: '2023-06-06 12:30',
+          start: '2023-07-03 11:00',
+          end: '2023-07-03 12:30',
           title: 'Spalare',
           content: 'Clicca per vedere',
           contentFull: 'Spalare merda. Questa attivita\' permette di migliorare la forza corporea. Guanti e pala sono provvisti gratuitamente', 
