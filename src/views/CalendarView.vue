@@ -12,7 +12,7 @@ import 'vue-cal/dist/vuecal.css'
     <vue-cal 
       style="height: 500px"
       :events="bdtevents"
-      :disable-views="['years']"
+      :disable-views="['year', 'day']"
       :time-from="8*60"
       :time-to="20*60"
       @ready="fetchEvents"
@@ -20,6 +20,9 @@ import 'vue-cal/dist/vuecal.css'
       :snap-to-time="15"
       hide-weekends
       editable-events
+      :on-event-create="onEventCreate"
+      :on-event-click="onEventClick"
+      @event-drag-create="showEventCreationDialog = true"
       class="vuecal--full-height-delete"
     />
 
@@ -35,6 +38,8 @@ import 'vue-cal/dist/vuecal.css'
         </template>
         <div>
           <strong>Dettagli dell'evento:</strong>
+          <br/>
+          <span>{{ selectedEvent.title }}</span>
           <ul>
             <li>Inizia: {{ selectedEvent.start && selectedEvent.start.formatTime() }}</li>
             <li>Termina: {{ selectedEvent.end && selectedEvent.end.formatTime() }}</li>
@@ -44,6 +49,43 @@ import 'vue-cal/dist/vuecal.css'
         <template #actions>
           <div class="spacer" />
         <w-button @click="eventDialog.show = false">Close</w-button>
+      </template>
+    </w-dialog>
+
+    <w-dialog
+      v-model="showEventCreationDialog"
+      :width="500"
+      :persistent="eventDialog.persistent"
+      :overlay-opacity="eventDialog.opacity"
+      >
+        <template #title>
+          <w-icon class="mr2">mdi mdi-tune</w-icon>
+          <w-input
+            class="mb4"
+            label="Title"
+            v-model="selectedEvent.title">
+            {{ selectedEvent.title }}
+          </w-input>
+        </template>
+        <div>
+          <strong>Dettagli dell'evento:</strong>
+          <ul>
+            <li>Inizia: {{ selectedEvent.start && selectedEvent.start.formatTime() }}</li>
+            <li>Termina: {{ selectedEvent.end && selectedEvent.end.formatTime() }}</li>
+          </ul>
+          <span>
+            <w-input
+            class="mb4"
+            label="contentFull"
+            v-model="selectedEvent.contentFull">
+            {{ selectedEvent.contentFull }}
+          </w-input>
+          </span>
+        </div>
+        <template #actions>
+          <div class="spacer" />
+          <w-button @click="cancelEventCreation()">Cancel</w-button>
+          <w-button @click="saveEvent(selectedEvent)">Save</w-button>
       </template>
     </w-dialog>
 </div>
@@ -58,6 +100,7 @@ export default {
   data() {
     return {
       selectedEvent: {},
+      showEventCreationDialog: false,
       eventDialog: {
         show: false,
         opacity: '0.5',
@@ -65,10 +108,71 @@ export default {
       },
       bdtevents: [],
       backendEvents: [],
-      calendarEvents: []
+      calendarEvents: [],
+      events: []
     }
   }, 
   methods: {
+    onEventCreate (event, deleteEventFunction) {
+      this.selectedEvent = event
+      this.deleteEventFunction = deleteEventFunction
+
+      // should I push into bdtevents instead?
+      event.id=this.events.length+1
+      this.events.push(event)
+
+      return event
+    },
+    cancelEventCreation () {
+      this.closeCreationDialog()
+      this.deleteEventFunction()
+    },
+    getEventHours(m) {
+      var hours = (m / 60);
+      var rhours = Math.floor(hours);
+      return rhours
+    },
+    getEventMinutes(m) {
+      var hours = (m / 60);
+      var rhours = Math.floor(hours);
+      var minutes = (hours - rhours) * 60;
+      var rminutes = Math.round(minutes);
+      return rminutes
+    },
+    saveEvent (selectedEvent) {
+      console.log('Storing event', { selectedEvent })
+
+      // compute week as we need it for fetching events
+      selectedEvent.week = selectedEvent.start.getWeek()
+      // fix dates
+      selectedEvent.guessStart = selectedEvent.start.format("YYYY-MM-DD") 
+        + " " 
+        + this.getEventHours(selectedEvent.startTimeMinutes) 
+        + ":" 
+        + this.getEventMinutes(selectedEvent.startTimeMinutes)
+      selectedEvent.guessEnd = selectedEvent.end.format("YYYY-MM-DD")
+        + " " 
+        + this.getEventHours(selectedEvent.endTimeMinutes) 
+        + ":" 
+        + this.getEventMinutes(selectedEvent.endTimeMinutes)
+
+      this.storeEventIntoBackend(selectedEvent)
+        .then(response => {
+          console.log(response)
+          this.events.pop(1)
+        }
+      )
+
+      this.closeCreationDialog()
+    },
+    closeCreationDialog () {
+      this.showEventCreationDialog = false
+      this.selectedEvent = {}
+    },
+    async storeEventIntoBackend(selectedEvent) {
+      const stored = await fetchWrapper.post(`${baseUrl}/create`, { selectedEvent })
+      return stored
+    },
     fetchEvents({ view, startDate, endDate, week }) {
       console.log('Fetching events', { view, startDate, endDate, week })
 

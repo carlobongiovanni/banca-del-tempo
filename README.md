@@ -26,6 +26,5 @@ npm run build
 
 ## Used Libraries
 
-[wave ui for css](https://antoniandre.github.io/wave-ui/)
 [calendar](https://antoniandre.github.io/vue-cal/)
 vue3 stack
