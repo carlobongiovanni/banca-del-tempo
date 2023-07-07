@@ -48,6 +48,7 @@ import 'vue-cal/dist/vuecal.css'
         </div>
         <template #actions>
           <div class="spacer" />
+        <w-button @click="deleteEvent(selectedEvent)">Elimina</w-button>
         <w-button @click="eventDialog.show = false">Close</w-button>
       </template>
     </w-dialog>
@@ -113,6 +114,30 @@ export default {
     }
   }, 
   methods: {
+    deleteEvent(selectedEvent) {
+      // fix dates
+      selectedEvent.guessStart = selectedEvent.start.format("YYYY-MM-DD") 
+        + " " 
+        + this.getEventHours(selectedEvent.startTimeMinutes) 
+        + ":" 
+        + this.getEventMinutes(selectedEvent.startTimeMinutes)
+      selectedEvent.guessEnd = selectedEvent.end.format("YYYY-MM-DD")
+        + " " 
+        + this.getEventHours(selectedEvent.endTimeMinutes) 
+        + ":" 
+        + this.getEventMinutes(selectedEvent.endTimeMinutes)
+
+      this.deleteEventFromBackend(selectedEvent)
+        .then(response => {
+          console.log(response)
+          this.eventDialog.show = false
+        }
+      )
+    },
+    async deleteEventFromBackend(selectedEvent) {
+      const stored = await fetchWrapper.post(`${baseUrl}/delete`, { selectedEvent })
+      return stored
+    },
     onEventCreate (event, deleteEventFunction) {
       this.selectedEvent = event
       this.deleteEventFunction = deleteEventFunction
@@ -130,14 +155,22 @@ export default {
     getEventHours(m) {
       var hours = (m / 60);
       var rhours = Math.floor(hours);
-      return rhours
+      var ret = rhours.toString()
+      if (rhours.toString().length == 1) {
+        ret = "0" + rhours.toString()
+      }
+      return ret
     },
     getEventMinutes(m) {
       var hours = (m / 60);
       var rhours = Math.floor(hours);
       var minutes = (hours - rhours) * 60;
       var rminutes = Math.round(minutes);
-      return rminutes
+      var ret = rminutes.toString()
+      if (rminutes.toString().length == 1) {
+        ret = "0" + rminutes.toString()
+      }
+      return ret
     },
     saveEvent (selectedEvent) {
       console.log('Storing event', { selectedEvent })
